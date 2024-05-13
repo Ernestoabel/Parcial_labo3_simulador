@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Clase 2</title>
+    <link rel="icon" href="./Archivos/imagenes/svg/fi-brands-3m.svg" type="image/svg+xml">
+    <link rel="stylesheet" type="text/css" href="./Archivos/Estilo.css" />
+    <link rel="stylesheet" type="text/css" href="./Archivos/EstiloFormulario.css" />
+    <link rel="stylesheet" type="text/css" href="./Archivos/EstiloTabla.css" />
+    <script src="./Archivos/Logica.js" type="module" defer></script>
+</head>
+
+<body>
+    <div class="container-general">
+        <header class="flex">
+            <div class="barra flex">
+                <h2 class="titulo flex">Ernesto<strong>Fatala</strong></h2>
+
+                <nav>
+                    <ul class="flex">
+                        <li><a href="https://discord.com/" target="_blank"><img
+                                    src="./Archivos/imagenes/svg/fi-brands-discord.svg"></a></li>
+                        <li><a href="https://open.spotify.com/" target="_blank"><img
+                                    src="./Archivos/imagenes/svg/fi-brands-spotify.svg"></a></li>
+                        <li><a href="https://twitter.com/" target="_blank"><img
+                                    src="./Archivos/imagenes/svg/fi-brands-twitter.svg"></a></li>
+                        <li><a href="https://www.youtube.com/" target="_blank"><img
+                                    src="./Archivos/imagenes/svg/fi-brands-youtube.svg"></a></li>
+                    </ul>
+                </nav>
+
+            </div>
+
+
+        </header>
+
+        <div id="miModal" class="modal">
+            <div class="modal-contenido">
+                <span class="cerrar">&times;</span>
+
+                <section>
+
+                    <form action="" method="post" id="form-usuario">
+                        <div class="form-group">
+                            <label for="nombre">Nombre</label>
+
+                            <input type="text" required name="nombre" id="nombre" placeholder="Ingrese nombre.."
+                                autocomplete="off" />
+
+                            <label for="apellido">Apellido</label>
+
+                            <input type="text" required name="apellido" id="apellido" placeholder="Ingrese apellido.."
+                                autocomplete="off" />
+
+
+
+                            <div class="form-group-checkbox">
+                                <label for="rock">Rock</label>
+
+                                <input type="checkbox" name="gusto" id="rock" value="Rock" />
+
+                                <label for="pop">Pop</label>
+
+                                <input type="checkbox" name="gusto" id="pop" value="Pop" />
+
+                                <label for="reggae">Reggae</label>
+
+                                <input type="checkbox" name="gusto" id="reggae" value="Reggea" />
+                            </div>
+
+
+
+                            <div class="form-group-genero">
+                                <label for="rMasculino">Masculino</label>
+                                <input type="radio" name="genero" id="rMasculino" value="Masculino" />
+
+                                <label for="rFemenino">Femenino</label>
+                                <input type="radio" name="genero" id="rFemenino" value="Femenino" />
+                            </div>
+
+
+
+                            <label for="pais">Pais</label>
+
+                            <select name="pais" id="pais">
+                                <optgroup label="Lat">
+                                    <option value="Argentina">Argentina</option>
+                                    <option value="Brasil">Brasil</option>
+                                    <option value="Chile">Chile</option>
+                                </optgroup>
+
+                                <optgroup label="Eur">
+                                    <option value="Alemania">Alemania</option>
+                                    <option value="Espania">Espania</option>
+                                    <option value="Francia">Francia</option>
+                                </optgroup>
+                            </select>
+
+                            <div class="form-group-observacion">
+                                <label for="observacion">Observacion</label>
+                                <textarea type="text" name="observacion" id="observacion" rows="4"></textarea>
+                            </div>
+
+                            <label for="archivo">Archivo</label>
+
+                            <input type="file" name="archivo" id="archivo" placeholder="Ingrese Archivo..">
+
+
+                            <button type="submit" class="btn">Enviar!</button>
+                        </div>
+                    </form>
+                </section>
+            </div>
+        </div>
+        <div class="container-tabla">
+            <button id="abrirModal">Abrir Formulario</button>
+
+            <div class="container-table flex">
+                <table id="table-items" class="table-items table-stripped flex">
+                    <thead>
+                        <tr class="flex">
+                            <th>Selec</th>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <th>Gustos</th>
+                            <th>Genero</th>
+                            <th>País</th>
+                        </tr>
+                    </thead>
+
+                    <tbody class="tbodyx"></tbody>
+                </table>
+            </div>
+
+        </div>
+        <footer>
+            <div class="barra flex">
+                <nav class="redes-sociales">
+                    <ul class="flex">
+                        <li><a href="https://discord.com/" target="_blank"><img src="./Archivos/imagenes/svg/fi-brands-discord.svg" class="icono"></a></li>
+                        <li><a href="https://open.spotify.com/" target="_blank"><img src="./Archivos/imagenes/svg/fi-brands-spotify.svg" class="icono"></a></li>
+                        <li><a href="https://twitter.com/" target="_blank"><img src="./Archivos/imagenes/svg/fi-brands-twitter.svg" class="icono"></a></li>
+                        <li><a href="https://www.youtube.com/" target="_blank"><img src="./Archivos/imagenes/svg/fi-brands-youtube.svg" class="icono"></a></li>
+                    </ul>
+                </nav>
+                <p class="derechos">Todos los Derechos Reservados 2020@</p>
+            </div>
+        </footer>
+    </div>
+</body>
