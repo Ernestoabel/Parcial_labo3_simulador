@@ -30,3 +30,4 @@ export function cerrarModal() {
     let modal = document.getElementById("miModal");
     modal.style.display = "none";
 }
+

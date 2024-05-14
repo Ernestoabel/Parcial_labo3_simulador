@@ -1,6 +1,6 @@
 import { initModal, cerrarModal } from "./Modal.js";
 import { Anuncio } from "./Clase.js";
-import { leer, escribir, limpiar, jsonToObject, objectToJson, mostrarSpinner, ocultarSpinner } from "./LocalStorage.js";
+import { leer, escribir, jsonToObject, objectToJson, mostrarSpinner, ocultarSpinner } from "./LocalStorage.js";
 
 document.addEventListener("DOMContentLoaded", onInit);
 
@@ -15,82 +15,128 @@ function onInit() {
     escuchandoFormulario();
 }
 
-async function loadItems() {
+//Funcion para cargar los item de la lista del Json
+function loadItems() {
     mostrarSpinner();
-    let str = await leer(KEY_STORAGE);
-    ocultarSpinner();
+    leer(KEY_STORAGE).then(str => {
+        ocultarSpinner();
+        const objetos = jsonToObject(str) || [];
 
-    const objetos = jsonToObject(str) || [];
+        objetos.forEach(obj => {
+            const model = new Anuncio(
+                obj.id,
+                obj.titulo,
+                obj.precio,
+                obj.color,
+                obj.transaccion,
+                obj.pais,
+                obj.descripcion
+            );
+            usuarios.push(model);
+        });
 
-    objetos.forEach(obj => {
-        //const gustosSeleccionados = Array.from(obj.gusto).map(input => input.value);
-        const model = new Anuncio(
-            obj.id,
-            obj.titulo,
-            obj.precio,
-            obj.color,
-            obj.transaccion,
-            obj.pais,
-            obj.descripcion
-        );
-        usuarios.push(model);
+        rellenarTabla();
+    }).catch(error => {
+        console.error('Error al cargar los datos:', error);
+        ocultarSpinner();
     });
-
-    rellenarTabla();
 }
 
+//Funcion para crear la tabla
 function rellenarTabla() {
     const tabla = document.getElementById("table-items");
-    let tbody = tabla.getElementsByTagName('tbody')[0];
+    const tbody = tabla.getElementsByTagName('tbody')[0];
 
-    tbody.innerHTML = ''; // Limpiar el tbody antes de agregar nuevos datos
+    limpiarTabla(tbody);
+    agregarFilas(tbody);
+    agregarBotonEliminar(tbody);
+}
 
+//Funcion para limpiar la tabla
+function limpiarTabla(tbody) {
+    tbody.innerHTML = ''; 
+}
+
+//Funcion para cargar datos en la fila
+function agregarFilas(tbody) {
     const celdas = ["id", "titulo", "precio", "color", "transaccion", "pais"];
 
     usuarios.forEach((item, index) => {
-        let nuevaFila = document.createElement("tr");
-        let radioBtn = document.createElement("input");
-        let celdaRadio = document.createElement("td");
-
-        radioBtn.type = "radio";
-        radioBtn.name = "filaSeleccionada"; // Asignar el mismo nombre a todos los botones de radio para que solo se pueda seleccionar uno
-        radioBtn.addEventListener("click", () => {
-            activarBotonEliminar(index); // Llamar a la función activarBotonEliminar con el índice como parámetro cuando se haga clic en el botón de radio
-        });
-
-        celdaRadio.appendChild(radioBtn);
-        nuevaFila.appendChild(celdaRadio);
-        celdas.forEach((celda) => {
-            let nuevaCelda = document.createElement("td");
-            if (celda === "gusto") {
-                if (Array.isArray(item[celda])) {
-                    nuevaCelda.textContent = item[celda].join(", ");
-                } else {
-                    nuevaCelda.textContent = "";
-                }
-            } else {
-                nuevaCelda.textContent = item[celda];
-            }
-            nuevaFila.appendChild(nuevaCelda);
-        });
-
-        // Agregar botón de radio a cada fila
-
-
-
-        // Agregar la fila al tbody
+        const nuevaFila = crearFila(item, index, celdas);
         tbody.appendChild(nuevaFila);
     });
+}
 
-    // Agregar botón Eliminar al final de la tabla
-    let filaBoton = document.createElement("tr");
-    let celdaBoton = document.createElement("td");
-    let botonEliminar = document.createElement("button");
-    estiloBoton(botonEliminar);
-    botonEliminar.disabled = true; // Desactivar el botón por defecto
-    botonEliminar.addEventListener("click", () => {
-        eliminarUsuario(); // Llamar a la función eliminarUsuario al hacer clic en el botón
+//Funcion para generar las filas, tomar el array del objeto, pasarlo a string para mostrarlo
+//tambien solo permite modificar las celdas titulo o precio nada mas
+function crearFila(item, index, celdas) {
+    const nuevaFila = document.createElement("tr");
+    const radioBtn = crearRadioBtn(index);
+
+    nuevaFila.appendChild(crearCeldaRadio(radioBtn));
+
+    celdas.forEach((celda) => {
+        const nuevaCelda = document.createElement("td");
+        if (celda === "gusto") {
+            nuevaCelda.textContent = Array.isArray(item[celda]) ? item[celda].join(", ") : "";
+        } else {
+            nuevaCelda.textContent = item[celda];
+            if (celda === "titulo" || celda === "precio") {
+                agregarEventoModificacion(nuevaCelda, index, celda);
+            }
+        }
+        nuevaFila.appendChild(nuevaCelda);
     });
+
+    return nuevaFila;
+}
+
+//Funcion para tomar el select con evento click para el indice de la fila
+function crearRadioBtn(index) {
+    const radioBtn = document.createElement("input");
+    radioBtn.type = "radio";
+    radioBtn.name = "filaSeleccionada";
+    radioBtn.addEventListener("click", () => activarBotonEliminar(index));
+    return radioBtn;
+}
+
+//Funcion para crear la celda del select
+function crearCeldaRadio(radioBtn) {
+    const celdaRadio = document.createElement("td");
+    celdaRadio.appendChild(radioBtn);
+    return celdaRadio;
+}
+
+//funcion para tomar el evento doble click sobre las celdas
+function agregarEventoModificacion(celda, index, campo) {
+    celda.addEventListener("dblclick", () => modificar(index, campo));
+}
+
+//Funcion para crear con logica el boton eliminar
+function crearBotonEliminar() {
+    const botonEliminar = document.createElement("button");
+    estiloBoton(botonEliminar);
+    botonEliminar.disabled = true;
+    botonEliminar.addEventListener("click", eliminarUsuario);
+    return botonEliminar;
+}
+
+//Funcion para darle estilo al boton eliminar con logica
+function estiloBoton(botonEliminar) {
+    botonEliminar.textContent = "Eliminar";
+    botonEliminar.style.backgroundColor = "red";
+    botonEliminar.style.color = "white";
+    botonEliminar.style.padding = "10px 20px";
+    botonEliminar.style.border = "none";
+    botonEliminar.style.borderRadius = "5px";
+}
+
+//Funcion para agregar el boton eliminar a una celda de la tabla
+function agregarBotonEliminar(tbody) {
+    const filaBoton = document.createElement("tr");
+    const celdaBoton = document.createElement("td");
+    const botonEliminar = crearBotonEliminar();
+
     celdaBoton.appendChild(botonEliminar);
     filaBoton.appendChild(celdaBoton);
     tbody.appendChild(filaBoton);
@@ -105,23 +151,44 @@ function activarBotonEliminar(index) {
     }
 }
 
+//funcion para modificar los item de la lista
+function modificar(index, campo) {
+    const nuevoValor = prompt(`Ingrese el nuevo valor para ${campo}:`);
+    if (nuevoValor !== null) {
+        usuarios[index][campo] = nuevoValor;
+        const str = objectToJson(usuarios);
+        guardarYRellenarTabla(str);
+    }
+}
+
 // Función para eliminar un usuario del array usuarios
 function eliminarUsuario() {
     let botonEliminar = document.querySelector("#table-items button");
     if (botonEliminar) {
         let index = parseInt(botonEliminar.dataset.index);
-        usuarios.splice(index, 1); // Eliminar el usuario en el índice guardado en el atributo data-index del botón
+        usuarios.splice(index, 1); 
         const str = objectToJson(usuarios);
-        escribir(KEY_STORAGE, str);
-        rellenarTabla(); // Volver a rellenar la tabla para reflejar los cambios
+        guardarYRellenarTabla(str)
     }
 }
 
+//funcion para guardar modificaciones en la lista junto a un texto de carga
+function guardarYRellenarTabla(str) {
+    mostrarSpinner();
+    escribir(KEY_STORAGE, str)
+    .then(() => {
+        ocultarSpinner();
+        rellenarTabla();
+    })
+    .catch(error => {
+        ocultarSpinner();
+        console.error('Error al guardar los datos:', error);
+    });
+}
 
+//Funcion submit del boton enviar en el modal para cargar un nuevo item a la lista
 function escuchandoFormulario() {
     formulario.addEventListener("submit", (e) => {
-        // Luego del primer parcial, comenzaremos a enviar los datos a un externo
-        // evito el comportamiento que realiza por defecto
         e.preventDefault();
 
         const id = obtenerProximoId();
@@ -132,17 +199,15 @@ function escuchandoFormulario() {
         const pais = formulario.querySelector("#pais").value;
         const descripcion = formulario.querySelector("#observacion").value;
 
-        // Construir objeto Usuario
         const model = new Anuncio(id, titulo, precio, color, transaccion, pais, descripcion);
 
-        // Validar nombre y apellido
         const nombreValido = Anuncio.validarNombreApellido(titulo);
         const precioValido = Anuncio.validarNumeroDecimal(precio);
 
         if (!nombreValido) {
             alert("El titulo debe contener solo letras y tener un máximo de 15 caracteres.");
             return;
-        } else if (!precioValido){
+        } else if (!precioValido) {
             alert("El precio deben ser solo numeros con o sin decimales");
         } else {
             usuarios.push(model);
@@ -171,10 +236,11 @@ function obtenerGenero() {
     if (radioButtons.length > 0) {
         return radioButtons[0].value;
     } else {
-        return null; // Retornar null si no se ha seleccionado ningún género
+        return null; 
     }
 }
 
+//Funcion para obtener el ultimo ID de la lista
 function obtenerUltimoId() {
     let ultimoId = 0;
     if (usuarios.length > 0) {
@@ -186,16 +252,9 @@ function obtenerUltimoId() {
 
 }
 
+//Funcion para sumar 1 al ultimo id encontrado
 function obtenerProximoId() {
     const ultimoId = obtenerUltimoId();
     return ultimoId + 1;
 }
 
-function estiloBoton(botonEliminar) {
-    botonEliminar.textContent = "Eliminar";
-    botonEliminar.style.backgroundColor = "red";
-    botonEliminar.style.color = "white";
-    botonEliminar.style.padding = "10px 20px";
-    botonEliminar.style.border = "none";
-    botonEliminar.style.borderRadius = "5px";
-}

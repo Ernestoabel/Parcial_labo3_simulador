@@ -43,20 +43,28 @@ export function objectToJson(objeto) {
     return JSON.stringify(objeto);
 }
 
-// Función para mostrar el spinner
 export function mostrarSpinner() {
-    action(true);
+    const loadingText = document.getElementById('loading-text');
+    loadingText.style.display = 'block';
+    animateLoadingText();
 }
 
-// Función para ocultar el spinner
 export function ocultarSpinner() {
-    action();
+    const loadingText = document.getElementById('loading-text');
+    loadingText.style.display = 'none';
 }
 
 
+function animateLoadingText() {
+    const loadingText = document.getElementById('loading-text');
+    let counter = 0;
+    const interval = setInterval(() => {
+        loadingText.textContent = 'Cargando' + '.'.repeat(counter % 4);
+        counter++;
+    }, 500);
 
-
-function action(visible = false) {
-    const display = visible ? 'flex' : 'none';
-    document.getElementById('spinner').style.display = display;
+    // Detener la animación después de un tiempo
+    setTimeout(() => {
+        clearInterval(interval);
+    }, 5000); // Detener después de 5 segundos (ajusta este valor según sea necesario)
 }
