@@ -1,6 +1,6 @@
 import { initModal, cerrarModal } from "./Modal.js";
-import { Usuario } from "./Clase.js";
-import { leer, escribir, limpiar, jsonToObject, objectToJson } from "./LocalStorage.js";
+import { Anuncio } from "./Clase.js";
+import { leer, escribir, limpiar, jsonToObject, objectToJson, mostrarSpinner, ocultarSpinner } from "./LocalStorage.js";
 
 document.addEventListener("DOMContentLoaded", onInit);
 
@@ -10,29 +10,33 @@ const formulario = document.getElementById("form-usuario");
 
 function onInit() {
     loadItems();
-    rellenarTabla();
+    //rellenarTabla();
     initModal();
     escuchandoFormulario();
 }
 
-function loadItems() {
-    let str = leer(KEY_STORAGE);
+async function loadItems() {
+    mostrarSpinner();
+    let str = await leer(KEY_STORAGE);
+    ocultarSpinner();
+
     const objetos = jsonToObject(str) || [];
 
     objetos.forEach(obj => {
         //const gustosSeleccionados = Array.from(obj.gusto).map(input => input.value);
-        const model = new Usuario(
+        const model = new Anuncio(
             obj.id,
-            obj.nombre,
-            obj.apellido,
-            obj.gusto,
-            obj.genero,
+            obj.titulo,
+            obj.precio,
+            obj.color,
+            obj.transaccion,
             obj.pais,
-            obj.comentario
+            obj.descripcion
         );
-        console.log(typeof model.gusto)
         usuarios.push(model);
     });
+
+    rellenarTabla();
 }
 
 function rellenarTabla() {
@@ -41,7 +45,7 @@ function rellenarTabla() {
 
     tbody.innerHTML = ''; // Limpiar el tbody antes de agregar nuevos datos
 
-    const celdas = ["id", "nombre", "apellido", "gusto", "genero", "pais"];
+    const celdas = ["id", "titulo", "precio", "color", "transaccion", "pais"];
 
     usuarios.forEach((item, index) => {
         let nuevaFila = document.createElement("tr");
@@ -121,23 +125,25 @@ function escuchandoFormulario() {
         e.preventDefault();
 
         const id = obtenerProximoId();
-        const nombre = formulario.querySelector("#nombre").value;
-        const apellido = formulario.querySelector("#apellido").value;
-        const gustos = obtenerGustos();
-        const genero = obtenerGenero();
+        const titulo = formulario.querySelector("#nombre").value;
+        const precio = formulario.querySelector("#apellido").value;
+        const color = obtenerGustos();
+        const transaccion = obtenerGenero();
         const pais = formulario.querySelector("#pais").value;
-        const observacion = formulario.querySelector("#observacion").value;
+        const descripcion = formulario.querySelector("#observacion").value;
 
         // Construir objeto Usuario
-        const model = new Usuario(id, nombre, apellido, gustos, genero, pais, observacion);
+        const model = new Anuncio(id, titulo, precio, color, transaccion, pais, descripcion);
 
         // Validar nombre y apellido
-        const nombreValido = Usuario.validarNombreApellido(nombre);
-        const apellidoValido = Usuario.validarNombreApellido(apellido);
+        const nombreValido = Anuncio.validarNombreApellido(titulo);
+        const precioValido = Anuncio.validarNumeroDecimal(precio);
 
-        if (!nombreValido || !apellidoValido) {
-            alert("El nombre y el apellido deben contener solo letras y tener un máximo de 15 caracteres.");
+        if (!nombreValido) {
+            alert("El titulo debe contener solo letras y tener un máximo de 15 caracteres.");
             return;
+        } else if (!precioValido){
+            alert("El precio deben ser solo numeros con o sin decimales");
         } else {
             usuarios.push(model);
             const str = objectToJson(usuarios);
@@ -175,7 +181,7 @@ function obtenerUltimoId() {
         ultimoId = usuarios[usuarios.length - 1].id;
         return ultimoId;
     } else {
-        return 1;
+        return 0;
     }
 
 }

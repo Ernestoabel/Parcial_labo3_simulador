@@ -1,19 +1,24 @@
-class Usuario {
-    constructor(id, nombre, apellido, gusto, genero, pais, comentario) {
+class Anuncio {
+    constructor(id, titulo, precio, color, transaccion, pais, descripcion) {
       this.id = id;
-      this.nombre = nombre;
-      this.apellido = apellido;
-      this.gusto = gusto;
-      this.genero = genero;
+      this.titulo = titulo;
+      this.precio = precio;
+      this.color = color;
+      this.transaccion = transaccion;
       this.pais = pais;
-      this.comentario = comentario;
+      this.descripcion = descripcion;
     }
     
     static validarNombreApellido(cadena) {
         const regex = /^[a-zA-Z]{1,15}$/;
         return regex.test(cadena);
     }
+
+    static validarNumeroDecimal(cadena) {
+      const regex = /^[0-9]+(\.[0-9]+)?$/;
+      return regex.test(cadena);
+  }
     
   }
   
-  export { Usuario };
+  export { Anuncio };

@@ -13,6 +13,9 @@
 </head>
 
 <body>
+    <div id="spinner" class="spinner">
+        <img src="./Archivos/imagenes/svg/fi-brands-acrobat.svg" alt="Spinner" class="spinner-img">
+    </div>
     <div class="container-general">
         <header class="flex">
             <div class="barra flex">
@@ -44,40 +47,40 @@
 
                     <form action="" method="post" id="form-usuario">
                         <div class="form-group">
-                            <label for="nombre">Nombre</label>
+                            <label for="nombre">Titulo</label>
 
-                            <input type="text" required name="nombre" id="nombre" placeholder="Ingrese nombre.."
+                            <input type="text" required name="nombre" id="nombre" placeholder="Ingrese titulo.."
                                 autocomplete="off" />
 
-                            <label for="apellido">Apellido</label>
+                            <label for="apellido">Precio</label>
 
-                            <input type="text" required name="apellido" id="apellido" placeholder="Ingrese apellido.."
+                            <input type="text" required name="apellido" id="apellido" placeholder="Ingrese precio.."
                                 autocomplete="off" />
 
 
 
                             <div class="form-group-checkbox">
-                                <label for="rock">Rock</label>
+                                <label for="rock">Rojo</label>
 
-                                <input type="checkbox" name="gusto" id="rock" value="Rock" />
+                                <input type="checkbox" name="gusto" id="rock" value="Rojo" />
 
-                                <label for="pop">Pop</label>
+                                <label for="pop">Verde</label>
 
-                                <input type="checkbox" name="gusto" id="pop" value="Pop" />
+                                <input type="checkbox" name="gusto" id="pop" value="Verde" />
 
-                                <label for="reggae">Reggae</label>
+                                <label for="reggae">Azul</label>
 
-                                <input type="checkbox" name="gusto" id="reggae" value="Reggea" />
+                                <input type="checkbox" name="gusto" id="reggae" value="Azul" />
                             </div>
 
 
 
                             <div class="form-group-genero">
-                                <label for="rMasculino">Masculino</label>
-                                <input type="radio" name="genero" id="rMasculino" value="Masculino" />
+                                <label for="rMasculino">3 Puertas</label>
+                                <input type="radio" name="genero" id="rMasculino" value="3-puertas" />
 
-                                <label for="rFemenino">Femenino</label>
-                                <input type="radio" name="genero" id="rFemenino" value="Femenino" />
+                                <label for="rFemenino">5 Puertas</label>
+                                <input type="radio" name="genero" id="rFemenino" value="5-puertas" />
                             </div>
 
 
@@ -103,9 +106,7 @@
                                 <textarea type="text" name="observacion" id="observacion" rows="4"></textarea>
                             </div>
 
-                            <label for="archivo">Archivo</label>
 
-                            <input type="file" name="archivo" id="archivo" placeholder="Ingrese Archivo..">
 
 
                             <button type="submit" class="btn">Enviar!</button>
@@ -136,14 +137,19 @@
             </div>
 
         </div>
+
         <footer>
             <div class="barra flex">
                 <nav class="redes-sociales">
                     <ul class="flex">
-                        <li><a href="https://discord.com/" target="_blank"><img src="./Archivos/imagenes/svg/fi-brands-discord.svg" class="icono"></a></li>
-                        <li><a href="https://open.spotify.com/" target="_blank"><img src="./Archivos/imagenes/svg/fi-brands-spotify.svg" class="icono"></a></li>
-                        <li><a href="https://twitter.com/" target="_blank"><img src="./Archivos/imagenes/svg/fi-brands-twitter.svg" class="icono"></a></li>
-                        <li><a href="https://www.youtube.com/" target="_blank"><img src="./Archivos/imagenes/svg/fi-brands-youtube.svg" class="icono"></a></li>
+                        <li><a href="https://discord.com/" target="_blank"><img
+                                    src="./Archivos/imagenes/svg/fi-brands-discord.svg" class="icono"></a></li>
+                        <li><a href="https://open.spotify.com/" target="_blank"><img
+                                    src="./Archivos/imagenes/svg/fi-brands-spotify.svg" class="icono"></a></li>
+                        <li><a href="https://twitter.com/" target="_blank"><img
+                                    src="./Archivos/imagenes/svg/fi-brands-twitter.svg" class="icono"></a></li>
+                        <li><a href="https://www.youtube.com/" target="_blank"><img
+                                    src="./Archivos/imagenes/svg/fi-brands-youtube.svg" class="icono"></a></li>
                     </ul>
                 </nav>
                 <p class="derechos">Todos los Derechos Reservados 2020@</p>
