@@ -88,11 +88,12 @@ function crearFila(item, index, celdas) {
     return nuevaFila;
 }
 
-//funcion para tomar el evento doble click sobre las celdas
+//funcion para tomar el evento doble click sobre las celdas y llamar a modificar el campo
 function agregarEventoModificacion(celda, index, campo) {
     celda.addEventListener("dblclick", () => modificar(index, campo));
 }
 
+// funcion para toamr las funciones del modificar
 function modificar(index, campo) {
     if (campo === "anillo" || campo === "vida") {
         modificarTrueoFalse(index, campo);
@@ -103,6 +104,7 @@ function modificar(index, campo) {
     }
 }
 
+// funcion para validar las modificaciones con solo texto o solo numeros
 function modificarCampo(index, campo) {
     const nuevoValor = prompt(`Ingrese el nuevo valor para ${campo}:`);
 
@@ -125,6 +127,7 @@ function modificarCampo(index, campo) {
     guardarYRellenarTabla(str);
 }
 
+//funcion para validar las opciones del campo con select
 function modificarTipo(index) {
     const nuevoValor = prompt("Ingrese el nuevo valor para el tipo (ej: Rocoso, Gaseoso, Helado o Enano):");
 
@@ -140,7 +143,7 @@ function modificarTipo(index) {
     guardarYRellenarTabla(str);
 }
 
-//funcion para modificar el campo puertas
+//funcion para modificar de los campo con true o false
 function modificarTrueoFalse(index, campo) {
     const nuevoValor = prompt(`Ingrese el nuevo valor para (true o false) ${campo}:`);
     const valoresValidos = ["true", "false"];
