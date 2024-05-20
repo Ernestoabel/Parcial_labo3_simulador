@@ -1,24 +1,13 @@
-class Anuncio {
-    constructor(id, titulo, precio, color, puertas, pais, descripcion) {
-      this.id = id;
-      this.titulo = titulo;
-      this.precio = precio;
-      this.color = color;
-      this.puertas = puertas;
-      this.pais = pais;
-      this.descripcion = descripcion;
-    }
-    
-    static validarNombreApellido(cadena) {
-        const regex = /^[a-zA-Z]{1,15}$/;
-        return regex.test(cadena);
-    }
+import { PlanetaBase } from './Padre.js'; 
 
-    static validarNumeroDecimal(cadena) {
-      const regex = /^[0-9]+(\.[0-9]+)?$/;
-      return regex.test(cadena);
+class Planeta extends PlanetaBase {
+  constructor(id, nombre, tamanio, masa, tipo, distancia, anillo, vida, composicion) {
+    super(id, nombre, tamanio, masa, tipo);
+    this.distancia = distancia;
+    this.anillo = anillo;
+    this.vida = vida;
+    this.composicion = composicion;
   }
-    
-  }
-  
-  export { Anuncio };
+}
+
+export { Planeta };

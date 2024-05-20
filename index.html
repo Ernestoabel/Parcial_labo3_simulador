@@ -13,11 +13,15 @@
 </head>
 
 <body>
-    
+
     <div class="container-general">
         <header class="flex">
             <div class="barra flex">
-                <h2 class="titulo flex">Ernesto<strong>Fatala</strong></h2>
+                
+                <h2 class="titulo flex">
+                    <img src="./Archivos/imagenes/logo.svg" alt="Icono" class="iconoHead flex">
+                    Ernesto<strong>Fatala</strong>
+                </h2>
 
                 <nav>
                     <ul class="flex">
@@ -31,7 +35,7 @@
                                     src="./Archivos/imagenes/svg/fi-brands-youtube.svg"></a></li>
                     </ul>
                 </nav>
-
+                <h4 class="subtitulo flex">Administrador de<br>Planetas</h3>
             </div>
 
 
@@ -41,71 +45,50 @@
             <div class="modal-contenido">
 
                 <section>
-                    
-                    <form action="" method="post" id="form-usuario">
+
+                    <form action="" method="post" id="form-planeta">
                         <span class="cerrar">&times;</span>
                         <div class="form-group">
-                            <label for="nombre">Titulo</label>
-
-                            <input type="text" required name="nombre" id="nombre" placeholder="Ingrese titulo.."
+                            <label for="nombre">Nombre</label>
+                            <input type="text" required name="nombre" id="nombre" placeholder="Ingrese nombre.."
                                 autocomplete="off" />
 
-                            <label for="apellido">Precio</label>
-
-                            <input type="text" required name="apellido" id="apellido" placeholder="Ingrese precio.."
+                            <label for="tamanio">Tamaño</label>
+                            <input type="text" required name="tamanio" id="tamanio" placeholder="Ingrese tamaño.."
                                 autocomplete="off" />
 
+                            <label for="masa">Masa</label>
+                            <input type="text" required name="masa" id="masa" placeholder="Ingrese masa.."
+                                autocomplete="off" />
 
+                            <label for="distancia">Distancia</label>
+                            <input type="text" required name="distancia" id="distancia"
+                                placeholder="Ingrese distancia.." autocomplete="off" />
 
                             <div class="form-group-checkbox">
-                                <label for="rock">Rojo</label>
+                                <label for="vida">Tiene Vida</label>
+                                <input type="checkbox" name="vida" id="vida" value="Tiene vida"/>
 
-                                <input type="checkbox" name="gusto" id="rock" value="Rojo" />
-
-                                <label for="pop">Verde</label>
-
-                                <input type="checkbox" name="gusto" id="pop" value="Verde" />
-
-                                <label for="reggae">Azul</label>
-
-                                <input type="checkbox" name="gusto" id="reggae" value="Azul" />
+                                <label for="anillo">Tiene Anillo</label>
+                                <input type="checkbox" name="anillo" id="anillo" value="Tiene anillo"/>
                             </div>
 
-
-
-                            <div class="form-group-genero">
-                                <label for="rMasculino">3 Puertas</label>
-                                <input type="radio" name="genero" id="rMasculino" value="3-puertas" />
-
-                                <label for="rFemenino">5 Puertas</label>
-                                <input type="radio" name="genero" id="rFemenino" value="5-puertas" />
-                            </div>
-
-
-
-                            <label for="pais">Pais</label>
-
-                            <select name="pais" id="pais">
-                                <optgroup label="Lat">
-                                    <option value="Argentina">Argentina</option>
-                                    <option value="Brasil">Brasil</option>
-                                    <option value="Chile">Chile</option>
+                            <label for="tipo">Tipo</label>
+                            <select name="tipo" id="tipo" required>
+                                <optgroup label="Grupo1">
+                                    <option value="Rocoso">Rocoso</option>
+                                    <option value="Gaseoso">Gaseoso</option>
                                 </optgroup>
-
-                                <optgroup label="Eur">
-                                    <option value="Alemania">Alemania</option>
-                                    <option value="Espania">Espania</option>
-                                    <option value="Francia">Francia</option>
+                                <optgroup label="Grupo2">
+                                    <option value="Helado">Helado</option>
+                                    <option value="Enano">Enano</option>
                                 </optgroup>
                             </select>
 
                             <div class="form-group-observacion">
-                                <label for="observacion">Observacion</label>
-                                <textarea type="text" name="observacion" id="observacion" rows="4"></textarea>
+                                <label for="observacion">Composición Atmosférica</label>
+                                <textarea type="text" name="observacion" id="observacion" rows="3" required></textarea>
                             </div>
-
-
-
 
                             <button type="submit" class="btn">Enviar!</button>
                         </div>
@@ -123,11 +106,14 @@
                         <tr class="flex">
                             <th>Selec</th>
                             <th>ID</th>
-                            <th>Titulo</th>
-                            <th>Precio</th>
-                            <th>Color</th>
-                            <th>Puertas</th>
-                            <th>País</th>
+                            <th>Nombre</th>
+                            <th>Tamaño</th>
+                            <th>Masa</th>
+                            <th>Tipo</th>
+                            <th>Distancia</th>
+                            <th>Anillo</th>
+                            <th>Vida</th>
+                            <th>Composición<br>Atmosférica</th>
                         </tr>
                     </thead>
 
@@ -138,21 +124,23 @@
         </div>
 
         <footer>
-            <div class="barra flex">
-                <nav class="redes-sociales">
-                    <ul class="flex">
-                        <li><a href="https://discord.com/" target="_blank"><img
-                                    src="./Archivos/imagenes/svg/fi-brands-discord.svg" class="icono"></a></li>
-                        <li><a href="https://open.spotify.com/" target="_blank"><img
-                                    src="./Archivos/imagenes/svg/fi-brands-spotify.svg" class="icono"></a></li>
-                        <li><a href="https://twitter.com/" target="_blank"><img
-                                    src="./Archivos/imagenes/svg/fi-brands-twitter.svg" class="icono"></a></li>
-                        <li><a href="https://www.youtube.com/" target="_blank"><img
-                                    src="./Archivos/imagenes/svg/fi-brands-youtube.svg" class="icono"></a></li>
-                    </ul>
-                </nav>
+
+            <nav class="redes-sociales">
+                <ul class="flex-fut">
+                    <li><a href="https://discord.com/" target="_blank"><img
+                                src="./Archivos/imagenes/svg/fi-brands-discord.svg" class="icono-foot"></a></li>
+                    <li><a href="https://open.spotify.com/" target="_blank"><img
+                                src="./Archivos/imagenes/svg/fi-brands-spotify.svg" class="icono-foot"></a></li>
+                    <li><a href="https://twitter.com/" target="_blank"><img
+                                src="./Archivos/imagenes/svg/fi-brands-twitter.svg" class="icono-foot"></a></li>
+                    <li><a href="https://www.youtube.com/" target="_blank"><img
+                                src="./Archivos/imagenes/svg/fi-brands-youtube.svg" class="icono-foot"></a></li>
+                </ul>
+            </nav>
+            <div class="footer-content">
                 <p class="derechos">Todos los Derechos Reservados 2020@</p>
             </div>
+
         </footer>
     </div>
 </body>

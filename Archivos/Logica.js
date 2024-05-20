@@ -1,12 +1,12 @@
 import { initModal, cerrarModal } from "./Modal.js";
-import { Anuncio } from "./Clase.js";
-import { leer, escribir, jsonToObject, objectToJson, mostrarSpinner, ocultarSpinner, mostrarSpinnerGiratorio, ocultarSpinnerGiratorio} from "./LocalStorage.js";
+import { Planeta } from "./Clase.js";
+import { leer, escribir, jsonToObject, objectToJson, mostrarSpinner, ocultarSpinner, mostrarSpinnerGiratorio, ocultarSpinnerGiratorio } from "./LocalStorage.js";
 
 document.addEventListener("DOMContentLoaded", onInit);
 
-const KEY_STORAGE = "usuarios";
-const usuarios = [];
-const formulario = document.getElementById("form-usuario");
+const KEY_STORAGE = "Planetas";
+const planetas = [];
+const formulario = document.getElementById("form-planeta");
 
 function onInit() {
     loadItems();
@@ -23,16 +23,18 @@ function loadItems() {
         const objetos = jsonToObject(str) || [];
 
         objetos.forEach(obj => {
-            const model = new Anuncio(
+            const model = new Planeta(
                 obj.id,
-                obj.titulo,
-                obj.precio,
-                obj.color,
-                obj.puertas,
-                obj.pais,
-                obj.descripcion
+                obj.nombre,
+                obj.tamanio,
+                obj.masa,
+                obj.tipo,
+                obj.distancia,
+                obj.anillo,
+                obj.vida,
+                obj.composicion
             );
-            usuarios.push(model);
+            planetas.push(model);
         });
 
         rellenarTabla();
@@ -54,21 +56,20 @@ function rellenarTabla() {
 
 //Funcion para limpiar la tabla
 function limpiarTabla(tbody) {
-    tbody.innerHTML = ''; 
+    tbody.innerHTML = '';
 }
 
 //Funcion para cargar datos en la fila
 function agregarFilas(tbody) {
-    const celdas = ["id", "titulo", "precio", "color", "puertas", "pais"];
+    const celdas = ["id", "nombre", "tamanio", "masa", "tipo", "distancia", "anillo", "vida", "composicion"];
 
-    usuarios.forEach((item, index) => {
+    planetas.forEach((item, index) => {
         const nuevaFila = crearFila(item, index, celdas);
         tbody.appendChild(nuevaFila);
     });
 }
 
-//Funcion para generar las filas, tomar el array del objeto, pasarlo a string para mostrarlo
-//tambien permite modificar las celdas titulo con el evento foble click
+//Funcion para generar las filas
 function crearFila(item, index, celdas) {
     const nuevaFila = document.createElement("tr");
     const radioBtn = crearRadioBtn(index);
@@ -77,23 +78,87 @@ function crearFila(item, index, celdas) {
 
     celdas.forEach((celda) => {
         const nuevaCelda = document.createElement("td");
-        if (celda === "color") {
-            nuevaCelda.textContent = Array.isArray(item[celda]) ? item[celda].join(", ") : "";
-            agregarEventoModificacion(nuevaCelda, index, celda);
-        } else if (celda === "puertas" || celda === "pais") {
+        if (celda != null) {
             nuevaCelda.textContent = item[celda];
             agregarEventoModificacion(nuevaCelda, index, celda);
-        } else {
-            nuevaCelda.textContent = item[celda];
-            if (celda === "titulo" || celda === "precio") {
-                agregarEventoModificacion(nuevaCelda, index, celda);
-            }
         }
         nuevaFila.appendChild(nuevaCelda);
     });
 
     return nuevaFila;
 }
+
+//funcion para tomar el evento doble click sobre las celdas
+function agregarEventoModificacion(celda, index, campo) {
+    celda.addEventListener("dblclick", () => modificar(index, campo));
+}
+
+function modificar(index, campo) {
+    if (campo === "anillo" || campo === "vida") {
+        modificarTrueoFalse(index, campo);
+    } else if (campo === "tipo") {
+        modificarTipo(index);
+    } else {
+        modificarCampo(index, campo);
+    }
+}
+
+function modificarCampo(index, campo) {
+    const nuevoValor = prompt(`Ingrese el nuevo valor para ${campo}:`);
+
+    if (campo === "nombre") {
+        const nombreValido = Planeta.validarSoloLetra(nuevoValor);
+        if (!nombreValido) {
+            alert("El nombre debe contener solo letras y tener un máximo de 15 caracteres.");
+            return;
+        }
+    } else if (campo === "tamanio" || campo === "distancia") {
+        const precioValido = Planeta.validarNumeroDecimal(nuevoValor);
+        if (!precioValido) {
+            alert("El precio tamaño ser solo números con o sin decimales.");
+            return;
+        }
+    }
+
+    planetas[index][campo] = nuevoValor;
+    const str = objectToJson(planetas);
+    guardarYRellenarTabla(str);
+}
+
+function modificarTipo(index) {
+    const nuevoValor = prompt("Ingrese el nuevo valor para el tipo (ej: Rocoso, Gaseoso, Helado o Enano):");
+
+    const tiposValidos = ["Rocoso", "Gaseoso", "Helado", "Enano"];
+
+    if (!tiposValidos.includes(nuevoValor)) {
+        alert(`El país ingresado no es válido. Los valores válidos son: ${tiposValidos.join(", ")}`);
+        return;
+    }
+
+    planetas[index].tipo = nuevoValor;
+    const str = objectToJson(planetas);
+    guardarYRellenarTabla(str);
+}
+
+//funcion para modificar el campo puertas
+function modificarTrueoFalse(index, campo) {
+    const nuevoValor = prompt(`Ingrese el nuevo valor para (true o false) ${campo}:`);
+    const valoresValidos = ["true", "false"];
+
+    if (!valoresValidos.includes(nuevoValor)) {
+        alert("El valor ingresado no es válido. Debe ser 'true' o 'false'.");
+        return;
+    }
+    if(campo === "vida"){
+        planetas[index]["vida"] = nuevoValor;
+    }else{
+        planetas[index]["anillo"] = nuevoValor;
+    }
+
+    const str = objectToJson(planetas);
+    guardarYRellenarTabla(str);
+}
+
 //Funcion para tomar el select con evento click para el indice de la fila
 function crearRadioBtn(index) {
     const radioBtn = document.createElement("input");
@@ -108,11 +173,6 @@ function crearCeldaRadio(radioBtn) {
     const celdaRadio = document.createElement("td");
     celdaRadio.appendChild(radioBtn);
     return celdaRadio;
-}
-
-//funcion para tomar el evento doble click sobre las celdas
-function agregarEventoModificacion(celda, index, campo) {
-    celda.addEventListener("dblclick", () => modificar(index, campo));
 }
 
 //Funcion para crear con logica el boton eliminar
@@ -149,122 +209,34 @@ function agregarBotonEliminar(tbody) {
 function activarBotonEliminar(index) {
     let botonEliminar = document.querySelector("#table-items button");
     if (botonEliminar) {
-        botonEliminar.disabled = false; // Activar el botón Eliminar
-        botonEliminar.dataset.index = index; // Guardar el índice del usuario seleccionado en el atributo data-index del botón
+        botonEliminar.disabled = false;
+        botonEliminar.dataset.index = index;
     }
 }
 
-//funcion para modificar los item de la lista
-function modificar(index, campo) {
-    if (campo === "color") {
-        modificarColor(index);
-    } else if (campo === "puertas") {
-        modificarPuertas(index);
-    } else if (campo === "pais") {
-        modificarPais(index);
-    } else {
-        modificarCampo(index, campo);
-    }
-}
-
-function modificarPais(index) {
-    const nuevoValor = prompt("Ingrese el nuevo valor para el país (ej: Argentina, Brasil, Chile, Alemania, España, Francia):");
-    
-    const paisesValidos = ["Argentina", "Brasil", "Chile", "Alemania", "España", "Francia"];
-    
-    if (!paisesValidos.includes(nuevoValor)) {
-        alert(`El país ingresado no es válido. Los valores válidos son: ${paisesValidos.join(", ")}`);
-        return;
-    }
-
-    usuarios[index].pais = nuevoValor;
-    const str = objectToJson(usuarios);
-    guardarYRellenarTabla(str);
-}
-
-//funcion para modificar el campo puertas
-function modificarPuertas(index) {
-    const nuevoValor = prompt(`Ingrese el nuevo valor para las puertas (3-puertas o 5-puertas):`);
-    const valoresValidos = ["3-puertas", "5-puertas"];
-    
-    if (!valoresValidos.includes(nuevoValor)) {
-        alert("El valor ingresado no es válido. Debe ser '3-puertas' o '5-puertas'.");
-        return;
-    }
-    
-    usuarios[index]["puertas"] = nuevoValor;
-    const str = objectToJson(usuarios);
-    guardarYRellenarTabla(str);
-}
-
-//funcion para modicifar el color que es un raid boton
-function modificarColor(index) {
-    const nuevoValor = prompt(`Ingrese los nuevos colores separados por comas (ej: Rojo, Verde, Azul):`);
-    if (!nuevoValor) {
-        alert("Debe ingresar al menos un color.");
-        return;
-    }
-
-    const colores = nuevoValor.split(',').map(color => color.trim());
-    const coloresValidos = ["Rojo", "Verde", "Azul"];
-
-    const coloresInvalidos = colores.filter(color => !coloresValidos.includes(color));
-    if (coloresInvalidos.length > 0) {
-        alert(`Los siguientes colores no son válidos: ${coloresInvalidos.join(', ')}`);
-        return;
-    }
-
-    usuarios[index]["color"] = colores;
-    const str = objectToJson(usuarios);
-    guardarYRellenarTabla(str);
-}
-
-//funcion para modificar los imput text de titulo o precio
-function modificarCampo(index, campo) {
-    const nuevoValor = prompt(`Ingrese el nuevo valor para ${campo}:`);
-    
-    if (campo === "titulo") {
-        const nombreValido = Anuncio.validarNombreApellido(nuevoValor);
-        if (!nombreValido) {
-            alert("El titulo debe contener solo letras y tener un máximo de 15 caracteres.");
-            return;
-        }
-    } else if (campo === "precio") {
-        const precioValido = Anuncio.validarNumeroDecimal(nuevoValor);
-        if (!precioValido) {
-            alert("El precio debe ser solo números con o sin decimales.");
-            return;
-        }
-    }
-    
-    usuarios[index][campo] = nuevoValor;
-    const str = objectToJson(usuarios);
-    guardarYRellenarTabla(str);
-}
-
-// Función para eliminar un usuario del array usuarios
+// Función para eliminar una fila del array planetas
 function eliminarUsuario() {
     let botonEliminar = document.querySelector("#table-items button");
     if (botonEliminar) {
         let index = parseInt(botonEliminar.dataset.index);
-        usuarios.splice(index, 1); 
-        const str = objectToJson(usuarios);
+        planetas.splice(index, 1);
+        const str = objectToJson(planetas);
         guardarYRellenarTabla(str)
     }
 }
 
-//funcion para guardar modificaciones en la lista junto a un texto de carga
+//funcion para simular un peticion y esperar en la lista junto a un texto de carga
 function guardarYRellenarTabla(str) {
     mostrarSpinner();
     escribir(KEY_STORAGE, str)
-    .then(() => {
-        ocultarSpinner();
-        rellenarTabla();
-    })
-    .catch(error => {
-        ocultarSpinner();
-        console.error('Error al guardar los datos:', error);
-    });
+        .then(() => {
+            ocultarSpinner();
+            rellenarTabla();
+        })
+        .catch(error => {
+            ocultarSpinner();
+            console.error('Error al guardar los datos:', error);
+        });
 }
 
 //Funcion submit del boton enviar en el modal para cargar un nuevo item a la lista
@@ -273,27 +245,33 @@ function escuchandoFormulario() {
         e.preventDefault();
 
         const id = obtenerProximoId();
-        const titulo = formulario.querySelector("#nombre").value;
-        const precio = formulario.querySelector("#apellido").value;
-        const color = obtenerGustos();
-        const puertas = obtenerGenero();
-        const pais = formulario.querySelector("#pais").value;
-        const descripcion = formulario.querySelector("#observacion").value;
+        const nombre = formulario.querySelector("#nombre").value;
+        const tamanio = formulario.querySelector("#tamanio").value;
+        const masa = formulario.querySelector("#tamanio").value;
+        const tipo = formulario.querySelector("#tipo").value;
+        const distancia = formulario.querySelector("#distancia").value;
+        const anillo = formulario.querySelector("#anillo").checked;
+        const vida = formulario.querySelector("#vida").checked;
+        const composicion = formulario.querySelector("#observacion").value;
 
-        const model = new Anuncio(id, titulo, precio, color, puertas, pais, descripcion);
+        const model = new Planeta(id, nombre, tamanio, masa, tipo, distancia, anillo, vida, composicion);
 
-        const nombreValido = Anuncio.validarNombreApellido(titulo);
-        const precioValido = Anuncio.validarNumeroDecimal(precio);
+        const nombreValido = Planeta.validarSoloLetra(nombre);
+        const tamanioValido = Planeta.validarNumeroDecimal(tamanio);
+        const distanciaValido = Planeta.validarNumeroDecimal(distancia);
 
         if (!nombreValido) {
-            alert("El titulo debe contener solo letras y tener un máximo de 15 caracteres.");
+            alert("El nombre debe contener solo letras y tener un máximo de 15 caracteres.");
             return;
-        } else if (!precioValido) {
-            alert("El precio deben ser solo numeros con o sin decimales");
+        } else if (!tamanioValido) {
+            alert("El tamaño debe ser solo numeros con o sin decimales");
+            return;
+        } else if (!distanciaValido) {
+            alert("La distancia debe ser solo numeros con o sin decimales");
             return;
         } else {
-            usuarios.push(model);
-            const str = objectToJson(usuarios);
+            planetas.push(model);
+            const str = objectToJson(planetas);
             escribir(KEY_STORAGE, str)
             formulario.reset();
             cerrarModal();
@@ -302,31 +280,11 @@ function escuchandoFormulario() {
     });
 }
 
-// Función para obtener los gustos seleccionados
-function obtenerGustos() {
-    const gustosSeleccionados = [];
-    const checkboxes = document.querySelectorAll('input[name="gusto"]:checked');
-    checkboxes.forEach((checkbox) => {
-        gustosSeleccionados.push(checkbox.value);
-    });
-    return gustosSeleccionados;
-}
-
-// Función para obtener el género seleccionado
-function obtenerGenero() {
-    const radioButtons = document.querySelectorAll('input[name="genero"]:checked');
-    if (radioButtons.length > 0) {
-        return radioButtons[0].value;
-    } else {
-        return null; 
-    }
-}
-
 //Funcion para obtener el ultimo ID de la lista
 function obtenerUltimoId() {
     let ultimoId = 0;
-    if (usuarios.length > 0) {
-        ultimoId = usuarios[usuarios.length - 1].id;
+    if (planetas.length > 0) {
+        ultimoId = planetas[planetas.length - 1].id;
         return ultimoId;
     } else {
         return 0;
