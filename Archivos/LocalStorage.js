@@ -68,3 +68,18 @@ function animateLoadingText() {
         clearInterval(interval);
     }, 5000); // Detener después de 5 segundos (ajusta este valor según sea necesario)
 }
+
+// Función para mostrar el spinner
+export function mostrarSpinnerGiratorio() {
+    action(true);
+}
+
+// Función para ocultar el spinner
+export function ocultarSpinnerGiratorio() {
+    action();
+}
+
+function action(visible = false) {
+    const display = visible ? 'flex' : 'none';
+    document.getElementById('spinner').style.display = display;
+}

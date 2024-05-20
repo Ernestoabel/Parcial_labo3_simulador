@@ -1,6 +1,6 @@
 import { initModal, cerrarModal } from "./Modal.js";
 import { Anuncio } from "./Clase.js";
-import { leer, escribir, jsonToObject, objectToJson, mostrarSpinner, ocultarSpinner } from "./LocalStorage.js";
+import { leer, escribir, jsonToObject, objectToJson, mostrarSpinner, ocultarSpinner, mostrarSpinnerGiratorio, ocultarSpinnerGiratorio} from "./LocalStorage.js";
 
 document.addEventListener("DOMContentLoaded", onInit);
 
@@ -28,7 +28,7 @@ function loadItems() {
                 obj.titulo,
                 obj.precio,
                 obj.color,
-                obj.transaccion,
+                obj.puertas,
                 obj.pais,
                 obj.descripcion
             );
@@ -59,7 +59,7 @@ function limpiarTabla(tbody) {
 
 //Funcion para cargar datos en la fila
 function agregarFilas(tbody) {
-    const celdas = ["id", "titulo", "precio", "color", "transaccion", "pais"];
+    const celdas = ["id", "titulo", "precio", "color", "puertas", "pais"];
 
     usuarios.forEach((item, index) => {
         const nuevaFila = crearFila(item, index, celdas);
@@ -68,7 +68,7 @@ function agregarFilas(tbody) {
 }
 
 //Funcion para generar las filas, tomar el array del objeto, pasarlo a string para mostrarlo
-//tambien solo permite modificar las celdas titulo o precio nada mas
+//tambien permite modificar las celdas titulo con el evento foble click
 function crearFila(item, index, celdas) {
     const nuevaFila = document.createElement("tr");
     const radioBtn = crearRadioBtn(index);
@@ -77,8 +77,12 @@ function crearFila(item, index, celdas) {
 
     celdas.forEach((celda) => {
         const nuevaCelda = document.createElement("td");
-        if (celda === "gusto") {
+        if (celda === "color") {
             nuevaCelda.textContent = Array.isArray(item[celda]) ? item[celda].join(", ") : "";
+            agregarEventoModificacion(nuevaCelda, index, celda);
+        } else if (celda === "puertas" || celda === "pais") {
+            nuevaCelda.textContent = item[celda];
+            agregarEventoModificacion(nuevaCelda, index, celda);
         } else {
             nuevaCelda.textContent = item[celda];
             if (celda === "titulo" || celda === "precio") {
@@ -90,7 +94,6 @@ function crearFila(item, index, celdas) {
 
     return nuevaFila;
 }
-
 //Funcion para tomar el select con evento click para el indice de la fila
 function crearRadioBtn(index) {
     const radioBtn = document.createElement("input");
@@ -153,12 +156,90 @@ function activarBotonEliminar(index) {
 
 //funcion para modificar los item de la lista
 function modificar(index, campo) {
-    const nuevoValor = prompt(`Ingrese el nuevo valor para ${campo}:`);
-    if (nuevoValor !== null) {
-        usuarios[index][campo] = nuevoValor;
-        const str = objectToJson(usuarios);
-        guardarYRellenarTabla(str);
+    if (campo === "color") {
+        modificarColor(index);
+    } else if (campo === "puertas") {
+        modificarPuertas(index);
+    } else if (campo === "pais") {
+        modificarPais(index);
+    } else {
+        modificarCampo(index, campo);
     }
+}
+
+function modificarPais(index) {
+    const nuevoValor = prompt("Ingrese el nuevo valor para el país (ej: Argentina, Brasil, Chile, Alemania, España, Francia):");
+    
+    const paisesValidos = ["Argentina", "Brasil", "Chile", "Alemania", "España", "Francia"];
+    
+    if (!paisesValidos.includes(nuevoValor)) {
+        alert(`El país ingresado no es válido. Los valores válidos son: ${paisesValidos.join(", ")}`);
+        return;
+    }
+
+    usuarios[index].pais = nuevoValor;
+    const str = objectToJson(usuarios);
+    guardarYRellenarTabla(str);
+}
+
+//funcion para modificar el campo puertas
+function modificarPuertas(index) {
+    const nuevoValor = prompt(`Ingrese el nuevo valor para las puertas (3-puertas o 5-puertas):`);
+    const valoresValidos = ["3-puertas", "5-puertas"];
+    
+    if (!valoresValidos.includes(nuevoValor)) {
+        alert("El valor ingresado no es válido. Debe ser '3-puertas' o '5-puertas'.");
+        return;
+    }
+    
+    usuarios[index]["puertas"] = nuevoValor;
+    const str = objectToJson(usuarios);
+    guardarYRellenarTabla(str);
+}
+
+//funcion para modicifar el color que es un raid boton
+function modificarColor(index) {
+    const nuevoValor = prompt(`Ingrese los nuevos colores separados por comas (ej: Rojo, Verde, Azul):`);
+    if (!nuevoValor) {
+        alert("Debe ingresar al menos un color.");
+        return;
+    }
+
+    const colores = nuevoValor.split(',').map(color => color.trim());
+    const coloresValidos = ["Rojo", "Verde", "Azul"];
+
+    const coloresInvalidos = colores.filter(color => !coloresValidos.includes(color));
+    if (coloresInvalidos.length > 0) {
+        alert(`Los siguientes colores no son válidos: ${coloresInvalidos.join(', ')}`);
+        return;
+    }
+
+    usuarios[index]["color"] = colores;
+    const str = objectToJson(usuarios);
+    guardarYRellenarTabla(str);
+}
+
+//funcion para modificar los imput text de titulo o precio
+function modificarCampo(index, campo) {
+    const nuevoValor = prompt(`Ingrese el nuevo valor para ${campo}:`);
+    
+    if (campo === "titulo") {
+        const nombreValido = Anuncio.validarNombreApellido(nuevoValor);
+        if (!nombreValido) {
+            alert("El titulo debe contener solo letras y tener un máximo de 15 caracteres.");
+            return;
+        }
+    } else if (campo === "precio") {
+        const precioValido = Anuncio.validarNumeroDecimal(nuevoValor);
+        if (!precioValido) {
+            alert("El precio debe ser solo números con o sin decimales.");
+            return;
+        }
+    }
+    
+    usuarios[index][campo] = nuevoValor;
+    const str = objectToJson(usuarios);
+    guardarYRellenarTabla(str);
 }
 
 // Función para eliminar un usuario del array usuarios
@@ -195,11 +276,11 @@ function escuchandoFormulario() {
         const titulo = formulario.querySelector("#nombre").value;
         const precio = formulario.querySelector("#apellido").value;
         const color = obtenerGustos();
-        const transaccion = obtenerGenero();
+        const puertas = obtenerGenero();
         const pais = formulario.querySelector("#pais").value;
         const descripcion = formulario.querySelector("#observacion").value;
 
-        const model = new Anuncio(id, titulo, precio, color, transaccion, pais, descripcion);
+        const model = new Anuncio(id, titulo, precio, color, puertas, pais, descripcion);
 
         const nombreValido = Anuncio.validarNombreApellido(titulo);
         const precioValido = Anuncio.validarNumeroDecimal(precio);
@@ -209,10 +290,11 @@ function escuchandoFormulario() {
             return;
         } else if (!precioValido) {
             alert("El precio deben ser solo numeros con o sin decimales");
+            return;
         } else {
             usuarios.push(model);
             const str = objectToJson(usuarios);
-            escribir(KEY_STORAGE, str);
+            escribir(KEY_STORAGE, str)
             formulario.reset();
             cerrarModal();
             rellenarTabla();

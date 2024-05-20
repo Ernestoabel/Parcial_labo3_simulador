@@ -1,10 +1,10 @@
 class Anuncio {
-    constructor(id, titulo, precio, color, transaccion, pais, descripcion) {
+    constructor(id, titulo, precio, color, puertas, pais, descripcion) {
       this.id = id;
       this.titulo = titulo;
       this.precio = precio;
       this.color = color;
-      this.transaccion = transaccion;
+      this.puertas = puertas;
       this.pais = pais;
       this.descripcion = descripcion;
     }
